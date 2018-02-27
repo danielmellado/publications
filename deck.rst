@@ -106,7 +106,7 @@ Zuul v3 Branches
 * Any job can set *explicit branch matchers*
 * We're backporting some jobs to stable branches now
 * In the future, branching should just DTRT
-  
+
 Zuul v3 GitHub
 --------------
 .. transition:: pan
@@ -138,41 +138,118 @@ Zuul v3 Devstack
 ----------------
 .. transition:: pan
 
-TODO update
+* Transition auto-migrated integration jobs to Zuul v3 native
+* Devstack provides *one base job* for single and multi-node setups
+* Define services, plugins, configurations in YAML
+* Use job inheritance, keep your jobs readable and maintainable
+* Unleash the full power of Ansible for more complex scenarios
 
-.. code:: yaml
+Zuul v3 Devstack
+----------------
+.. transition:: tilt
+
+.. code-block::
 
   - job:
-      name: devstack
-      parent: multinode
-      description: Base devstack job
-      nodeset: openstack-single-node
-      required-projects:
-        - openstack-dev/devstack
-        - openstack/cinder
-        - openstack/glance
-        - openstack/keystone
-        - openstack/neutron
-        - openstack/nova
-        - openstack/requirements
-        - openstack/swift
+      name: sahara-tests-scenario
+      description: |
+        Run scenario tests for Sahara.
+      parent: devstack-multinode
+      nodeset: openstack-two-nodes
       roles:
-        - zuul: openstack-infra/openstack-zuul-jobs
-      pre-run: playbooks/pre.yaml
-      run: playbooks/devstack.yaml
-      post-run: playbooks/post.yaml
+        - zuul: openstack/sahara-image-elements
+      required-projects:
+        - openstack/sahara-tests
+        - openstack/sahara
+        - openstack/heat
+        - openstack/ceilometer
+        - openstack/sahara-image-elements
+        - openstack-infra/shade
+      run: playbooks/sahara-tests-scenario.yaml
+
+Zuul v3 Devstack
+----------------
+.. transition:: tilt
+
+.. code-block::
+
       vars:
-        devstack_localrc:
-          ADMIN_PASSWORD: secretadmin
+        devstack_local_conf:
+          post-config:
+            "$SAHARA_CONF":
+              DEFAULT:
+                min_transient_cluster_active_time: 90
+        devstack_plugins:
+          sahara: 'git://git.openstack.org/openstack/sahara'
+          heat: 'git://git.openstack.org/openstack/heat'
+          ceilometer: 'git://git.openstack.org/openstack/ceilometer'
+          shade: 'git://git.openstack.org/openstack-infra/shade'
         devstack_services:
-          horizon: False
-          tempest: False
+          s-proxy: true
+          tls-proxy: false
+	  (...)
+        sahara_image_name: 'xenial-server'
+        (...)
+      group-vars:
+        subnode:
+          devstack_services:
+            tls-proxy: false
 
 Zuul v3 Tempest
 ---------------
 .. transition:: pan
 
-TODO
+* Tempest provides *one base job* for single and multi-node setups
+* Install plugins, filter tests from the job definition
+* Integrated gate jobs migrated by the QA team
+* Thorough migration documentation coming soon: https://review.openstack.org/#/c/545992/
+* Kick-start your migration at the PTG!
+* Grenade base job work in progress
+
+Zuul v3 Tempest
+---------------
+.. transition:: tilt
+
+.. code-block::
+
+  - job:
+      name: kuryr-kubernetes-tempest-base
+      parent: devstack-tempest
+      description: Base kuryr-kubernetes-job
+      required-projects:
+        - openstack/devstack-plugin-container
+        - openstack/kuryr
+        - openstack/kuryr-kubernetes
+        - openstack/kuryr-tempest-plugin
+        - openstack/neutron-lbaas
+        - openstack/tempest
+
+Zuul v3 Tempest
+---------------
+.. transition:: tilt
+
+.. code-block::
+
+      vars:
+        tempest_test_regex: '^(kuryr_tempest_plugin.tests.)'
+        tox_envlist: 'all'
+        devstack_localrc:
+          KURYR_K8S_API_PORT: 8080
+          TEMPEST_PLUGINS: '/opt/stack/kuryr-tempest-plugin'
+        devstack_services:
+          base: false
+          kubernetes-api: true
+          kubelet: true
+          kuryr-kubernetes: true
+          key: true
+          mysql: true
+          neutron: true
+          (...)
+          tempest: true
+        devstack_plugins:
+          kuryr-kubernetes: https://git.openstack.org/openstack/kuryr
+          devstack-plugin-container: https://git.openstack.org/openstack/devstack-plugin-container
+          neutron-lbaas: https://git.openstack.org/openstack/neutron-lbaas
 
 TC Top 5 Help Wanted
 --------------------
@@ -187,13 +264,14 @@ Contact Info
 ------------
 .. transition:: pan
 
-* IRC: #openstack-infra on Freenode
+* IRC: #openstack-infra and #openstack-qa on Freenode
 * E-mail: openstack-infra@lists.openstack.org
 * In person: https://www.openstack.org/ptg/
 
   * Infra help room: *Davin Suite, L4*
   
 * Documentation: https://docs.openstack.org/infra/system-config/
+* Documentation: https://docs.openstack.org/devstack/latest/
 * ...and all around the PTG -- feel free to say hi!
 
 Questions
