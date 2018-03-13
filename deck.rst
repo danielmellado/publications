@@ -17,56 +17,78 @@ Main Title
 .. transition:: tilt
    :duration: 2
 .. hidetitle::
-.. figlet:: An Important News Update
+.. figlet:: OpenStack Barcelona Meetup
 
-An OpenStack Infrastructure Team Production
+The path to ZuulV3 within Kuryr-Kubernetes
 
-Gerrit Upgrade
---------------
+Who am I?
+---------
+* Daniel Mellado
+* Senior Software Engineer at Red Hat
+* Kuryr PTL for Rocky cycle.
 
-* Gerrit upgraded to 2.13
-
-  * Many bugfixes
-  * You can now repush old patchsets
-
-* Plan to upgrade to 2.14.
-
-Meltdown / Spectre
-------------------
-
-* Infra services patched against Meltdown
-
-  * Xen largely avoided this at hypervisor level
-
-* Retpoline showing up to address part of Spectre
-
-  * Performance degradation using UCA qemu post Spectre mitigation
-  * Rely on cloud providers to update hardware
-
-State of the Clouds
--------------------
-.. transition:: tilt
-   :duration: 2
-
-* Thank you to all our infra resource donors!
-* Current Clouds (in alpha order)
-
-  * Citycloud
-  * Internap
-  * Linaro (in progress)
-  * OVH
-  * Rackspace
-  * Vexxhost
-
-* No more Infracloud
-
-Zuul v3 Deployed
+Kuryr-Kubernetes
 ----------------
+* Kubernetes integration with OpenStack networking
+
+  * Enables native Neutron-based networking in Kubernetes
+  * Run both OpenStack VMs and Kubernetes Pods on the same Neutron network
+
+Zuul
+----
 .. transition:: dissolve
 .. hidetitle::
 
 .. ansi:: zuul.ans
 
+Zuul
+----
+.. transition:: pan
+
+* Multi-cloud, scalable, elastic CI/CD engine
+* In production for OpenStack
+
+  * Also in use by Wikimedia, BMW and others
+
+* Nodepool attaches single-use cloud slaves to Jenkins Master Pool
+
+  * Triggers jobs on Jenkins Pool for executing job content
+  * Jenkins serves no role except remote execution
+
+Zuul
+----
+.. transition:: pan
+
+* Periodic: jobs run in response to a timer
+* Post: jobs run after a change
+* Check: job run when someone proposes a change
+* Gate: jobs run between change approval and landing
+
+Why not Jenkins
+---------------
+.. transision:: pan
+
+* Scalability
+* Security
+
+* ssh slave plugin
+
+* Projects to try to mitigate this
+
+  * JClouds plugin
+  * Gearman Worker
+  * jjb
+
+Zuul v3
+-------
+.. transition:: tilt
+   :duration: 2
+
+* Replace Jenkins with Ansible
+* Add github PR integration in addition to gerrit
+* Jobs written and executed in Ansible
+* In-repo config
+* Support Bare Metal, VMs and Containers
 
 Zuul v3 Secrets
 ---------------
@@ -203,7 +225,6 @@ Zuul v3 Tempest
 * Install plugins, filter tests from the job definition
 * Integrated gate jobs migrated by the QA team
 * Thorough migration documentation coming soon: https://review.openstack.org/#/c/545992/
-* Kick-start your migration at the PTG!
 * Grenade base job work in progress
 
 Zuul v3 Tempest
@@ -251,28 +272,22 @@ Zuul v3 Tempest
           devstack-plugin-container: https://git.openstack.org/openstack/devstack-plugin-container
           neutron-lbaas: https://git.openstack.org/openstack/neutron-lbaas
 
-TC Top 5 Help Wanted
---------------------
+At Red Hat
+----------
 .. transition:: pan
 
-* Community Infrastructure Sysadmins
-
-* https://governance.openstack.org/tc/reference/
-  top-5-help-wanted.html
+* SoftwareFactory!!!
 
 Contact Info
 ------------
 .. transition:: pan
 
-* IRC: #openstack-infra and #openstack-qa on Freenode
-* E-mail: openstack-infra@lists.openstack.org
-* In person: https://www.openstack.org/ptg/
+* IRC: #openstack-kuryr on Freenode
+* E-mail: openstack-dev@lists.openstack.org
+* In person: here!
 
-  * Infra help room: *Davin Suite, L4*
-  
 * Documentation: https://docs.openstack.org/infra/system-config/
 * Documentation: https://docs.openstack.org/devstack/latest/
-* ...and all around the PTG -- feel free to say hi!
 
 Questions
 ---------
